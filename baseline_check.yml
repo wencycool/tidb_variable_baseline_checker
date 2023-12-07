@@ -1,0 +1,46 @@
+# 说明
+# var-type:[variable,tidb,tikv,tiflash...], 参数类型，variable部分只包含global系统参数的检查（show global variables)，
+  #其余代表集群参数的检查（show config）
+# val-name: 完整的参数名称，大小写需和参数一致
+# default-value: 推荐的默认参数值，如果当前参数设置值不和default-value一致，则会进行提示
+# baseline-policy: [force, recommend]，基线审查策略支持两种策略，强制执行和推荐执行，根据不同策略查看不符合基线的条目
+# baseline-type: [point,list,range], 基线类型包含三种判断规则，point：按照值进行判断，list：参数应在list列表中，range：参数应在这个范围中
+# baseline-value: []，是列表形式，根据baseline-type和baseline-value来确定基线的检查方法是等值，in列表，还是in范围。有几个特殊地方需要注意：
+  #['+']代表该参数值不能为空，必须存在,比如在判断路径时候，如果根据系统默认设置为空则不符合规范，需要人工设置。
+  #['*']代表该参数值可存在，当出现该值时，都会满足条件，主要用于测试，避免频繁更改整个yml文件的基线条目，直接打标记为["*"]即可忽略基线核查。
+  #['%xx%']支持正则形式，如果参数值设置为正则形式，那么对于baseline-type=point,list 类型来说只需要确定参数值like '%xx%'即符合基线值。长用于路径的匹配。
+  #['8h10m0s']这种时间格式会统一处理成秒进行匹配
+  #['true','Yes','ON']等忽略大小写会统一转换成1进行匹配，同样的['false','No','OFF']会统一转换成0进行匹配。
+  #['0.0','0'] 统一设置成0进行匹配
+  #['GiB','MiB','KiB','GB','MB','KB'] 等字节计量单位会统一转换成byte进行匹配
+
+# 额外说明：
+# 对于内存使用率%需要转换成操作系统内存值，因为在参数中填写的是真实值。比如tikv的blockcache占用操作系统45%-55%，
+# 但是如果该操作系统上存在多个tikv以及其它节点和tikv混合部署则配置较为麻烦，需要特殊处理，对于需要特殊处理的参数在代码中进行处理，此处暂不做考虑。
+
+
+variables:
+  - var-type: variable
+    var-name: "transaction_isolation"
+    default-value: "REPEATABLE-READ"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["REPEATABLE-READ"]
+  - var-type: variable
+    var-name: "tidb_gc_run_interval"
+    default-value: "10m0s"
+    baseline-policy: force
+    baseline-type: range
+    baseline-value: [ "10m1s", "8h0m0s" ]
+  - var-type: tidb
+    var-name: "performance.stmt-count-limit"
+    default-value: "5000"
+    baseline-policy: recommend
+    baseline-type: range
+    baseline-value: ["3000", "6000"]
+  - var-type: tikv
+    var-name: "storage.io-rate-limit.foreground-read-priority"
+    default-value: 'high'
+    baseline-policy: recommend
+    baseline-type: list
+    baseline-value: ['low', 'medium', 'hight']
