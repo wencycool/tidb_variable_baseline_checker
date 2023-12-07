@@ -58,6 +58,7 @@ def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
         else:
             operator = "=="
     # 支持like语句写法比如['%path%','a%','%b']
+    # todo 须对var1，var2支持like形式和baseline_check.yml中支持like形式保持一致
     in_to_eq_parms = ['%path%']
     _val1, changed1 = data_cleansing(val1)
     _val2, changed2 = data_cleansing(val2)
