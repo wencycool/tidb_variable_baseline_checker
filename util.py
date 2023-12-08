@@ -1,7 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import json
 import re
 import ast
+
+import yaml
+from jsonschema import validate
+def baseline_varidation(baseline_dict):
+    with open('baseline_validation.json','r') as file:
+        data = json.load(file)
+    # 如果校验不通过则抛出异常
+    validate(instance=baseline_dict, schema=data)
+
+
 def check_number(s):
     """
     判断当前字符串是否数字类型，并返回浮点数

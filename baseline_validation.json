@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "properties": {
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "var-type": {
+            "type": "string",
+            "enum": [
+              "variable",
+              "pd",
+              "tidb",
+              "tikv",
+              "tiflash"
+            ]
+          },
+          "var-name": {
+            "type": "string"
+          },
+          "baseline-policy": {
+            "type": "string",
+            "enum": [
+              "force",
+              "recommend"
+            ]
+          },
+          "baseline-type": {
+            "type": "string",
+            "enum": [
+              "point",
+              "list",
+              "range"
+            ]
+          },
+          "baseline-value": {
+            "type": "array",
+            "minItems": 1
+          }
+        },
+        "required": [
+          "var-type",
+          "var-name",
+          "default-value",
+          "baseline-policy",
+          "baseline-type",
+          "baseline-value"
+        ]
+      }
+    }
+  }
+}

@@ -31,7 +31,7 @@ variables:
     default-value: "10m0s"
     baseline-policy: force
     baseline-type: range
-    baseline-value: [ "10m1s", "8h0m0s" ]
+    baseline-value: [ "9m1s", "8h0m0s" ]
   - var-type: tidb
     var-name: "performance.stmt-count-limit"
     default-value: "5000"
