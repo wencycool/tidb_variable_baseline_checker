@@ -159,3 +159,9 @@ variables:
     baseline-policy: recommend
     baseline-type: point
     baseline-value: ['!/tmp']
+  - var-type: variable
+    var-name: tidb_mem_quota_query
+    default-value: 1073741824
+    baseline-policy: recommend
+    baseline-type: range
+    baseline-value: ["2GB", "10GB"]

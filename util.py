@@ -6,8 +6,10 @@ import ast
 
 import yaml
 from jsonschema import validate
+
+
 def baseline_varidation(baseline_dict):
-    with open('baseline_validation.json','r') as file:
+    with open('baseline_validation.json', 'r') as file:
         data = json.load(file)
     # 如果校验不通过则抛出异常
     validate(instance=baseline_dict, schema=data)
@@ -29,6 +31,8 @@ def check_number(s):
         return int(s), True
     else:
         return None, False
+
+
 def check_list(s):
     """
     检查当前字符串是否列表形式，并返回列表
@@ -43,10 +47,10 @@ def check_list(s):
             return result, True
     except (SyntaxError, ValueError):
         return None, False
-    return None,False
+    return None, False
 
 
-def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
+def variable_data_compare(parm, val1: str, val2: str, operator="=="):
     """
     比较两个参数值是否符合compare_flag逻辑
     operator="="时，判断val1和val2是否相等（对于路径，可能存在包含关系也代表相同）
@@ -62,7 +66,7 @@ def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
     val2 = str(val2)
     if val1 == "*" or val2 == "*":
         return True
-    elif val1 =="+":
+    elif val1 == "+":
         if val2 is None or len(val2) == 0:
             return False
         else:
@@ -85,10 +89,11 @@ def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
             operator = "=="
     _val1, changed1 = data_cleansing(val1)
     _val2, changed2 = data_cleansing(val2)
+
     # if changed1 or changed2:
     #     print(f"------>parm:{parm},val1:{val1}~{_val1},val2:{val2}~{_val2}")
 
-    def like_eq(val1:str,val2:str):
+    def like_eq(val1: str, val2: str):
         # 如果直接相同则返回
         if val1 == val2:
             return True
@@ -119,10 +124,11 @@ def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
         if val2.startswith("!") and not val1.startswith(val2.lstrip("!")):
             return True
         return False
+
     if operator == "==":
         return like_eq(_val1, _val2)
-    _val1_number,ok1 = check_number(_val1)
-    _val2_number,ok2 = check_number(_val2)
+    _val1_number, ok1 = check_number(_val1)
+    _val2_number, ok2 = check_number(_val2)
     # 可以进行比较
     if ok1 and ok2:
         if operator == ">":
@@ -136,6 +142,7 @@ def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
         elif operator == "!=" or operator == "<>":
             return _val1_number != _val2_number
     return False
+
 
 # 对参数值进行清理
 def data_cleansing(val: str) -> (str, bool):
@@ -196,7 +203,7 @@ def data_cleansing(val: str) -> (str, bool):
         _m = 0 if _m is None else int(_m)
         return _m * 60, True
     # 对列表形式进行处理
-    l, ok =  check_list(val)
+    l, ok = check_list(val)
     if ok:
         return ",".join(l), True
     return val, False

@@ -118,7 +118,7 @@ if __name__ == "__main__":
         result_filter = []
         for i in reversed(range(len(result["variables"]))):
             baseline = result["variables"][i]
-            if baseline["baseline_policy"] == "force" and baseline["check_baseline"] == False:
+            if baseline["baseline_policy"] == "recommend" and baseline["check_baseline"] == False:
                 result_filter.append(baseline)
         result = yaml.dump(result_filter, indent=2, sort_keys=False)
         print(result)
