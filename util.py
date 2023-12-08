@@ -57,6 +57,19 @@ def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
     :param val2:
     :return:返回两个值是否逻辑相等
     """
+    # 处理特殊形式，针对值为*或者+的情况进行处理
+    if val1 == "*" or val2 == "*":
+        return True
+    elif val1 =="+":
+        if val2 is None or len(val2) == 0:
+            return False
+        else:
+            return True
+    elif val2 == "+":
+        if val1 is None or len(val1) == 0:
+            return False
+        else:
+            return True
     if operator not in ["==", ">=", "<=", ">", "<", "!=", "<>"]:
         if operator == "lt":
             operator = "<"
@@ -68,46 +81,44 @@ def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
             operator = "=="
         else:
             operator = "=="
-    # 支持like语句写法比如['%path%','a%','%b']
-    # todo 须对var1，var2支持like形式和baseline_check.yml中支持like形式保持一致
-    in_to_eq_parms = ['%path%']
     _val1, changed1 = data_cleansing(val1)
     _val2, changed2 = data_cleansing(val2)
     # if changed1 or changed2:
     #     print(f"------>parm:{parm},val1:{val1}~{_val1},val2:{val2}~{_val2}")
-    def in_like_list(val, l: list):
-        """
-        l列表中支持类似于like语法的字符串，当遇到%a%情况时需要进行like匹配处理
-        :param val: val值是否在l列表中，如果l列表中元素起始包含%则按照like进行处理
-        :param l:
-        :return:
-        """
-        for each_data in l:
-            if each_data.startswith("%") and each_data.endswith("%"):
-                if each_data.strip("%") in val:
-                    return True
-            elif each_data.startswith("%"):
-                if each_data.endswith(each_data.lstrip("%")):
-                    return True
-            elif each_data.endswith("%"):
-                if each_data.startswith(each_data.rstrip("%")):
-                    return True
-            else:
-                if each_data == val:
-                    return True
+
+    def like_eq(val1:str,val2:str):
+        # 如果直接相同则返回
+        if val1 == val2:
+            return True
+        # val2包含val1则返回True
+        if val1.startswith("%") and val1.endswith("%"):
+            if val1.strip("%") in val2:
+                return True
+        elif val1.startswith("%"):
+            if val2.endswith(val1.lstrip("%")):
+                return True
+        elif val1.endswith("%"):
+            if val2.startswith(val1.rstrip("%")):
+                return True
+        # 如果val1包含val2则返回False
+        if val2.startswith("%") and val2.endswith("%"):
+            if val2.strip("%") in val1:
+                return True
+        elif val2.startswith("%"):
+            if val1.endswith(val2.lstrip("%")):
+                return True
+        elif val2.endswith("%"):
+            if val1.startswith(val2.rstrip("%")):
+                return True
+        # val1不以xx开头
+        if val1.startswith("!") and not val2.startswith(val1.lstrip("!")):
+            return True
+        # val2不以xx开头
+        if val2.startswith("!") and not val1.startswith(val2.lstrip("!")):
+            return True
         return False
     if operator == "==":
-        if in_like_list(parm, in_to_eq_parms):
-            if _val1 in _val2 or _val2 in _val1:
-                return True
-            else:
-                return False
-        else:
-            if _val1 == _val2:
-                return True
-            else:
-                return False
-
+        return like_eq(val1, val2)
     _val1_number,ok1 = check_number(_val1)
     _val2_number,ok2 = check_number(_val2)
     # 可以进行比较

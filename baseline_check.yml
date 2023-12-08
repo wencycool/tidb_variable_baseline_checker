@@ -9,6 +9,7 @@
   #['+']代表该参数值不能为空，必须存在,比如在判断路径时候，如果根据系统默认设置为空则不符合规范，需要人工设置。
   #['*']代表该参数值可存在，当出现该值时，都会满足条件，主要用于测试，避免频繁更改整个yml文件的基线条目，直接打标记为["*"]即可忽略基线核查。
   #['%xx%']支持正则形式，如果参数值设置为正则形式，那么对于baseline-type=point,list 类型来说只需要确定参数值like '%xx%'即符合基线值。长用于路径的匹配。
+  #['!xx']支持不以xx开头形式
   #['8h10m0s']这种时间格式会统一处理成秒进行匹配
   #['true','Yes','ON']等忽略大小写会统一转换成1进行匹配，同样的['false','No','OFF']会统一转换成0进行匹配。
   #['0.0','0'] 统一设置成0进行匹配
@@ -44,3 +45,15 @@ variables:
     baseline-policy: recommend
     baseline-type: list
     baseline-value: ['low', 'medium', 'hight']
+  - var-type: tidb
+    var-name: "performance.stmt-count-limit"
+    default-value: "5000"
+    baseline-policy: recommend
+    baseline-type: range
+    baseline-value: ["3000", "6000"]
+  - var-type: tidb
+    var-name: "tmp-storage-path"
+    default-value: 'tmp-storage'
+    baseline-policy: recommend
+    baseline-type: point
+    baseline-value: ['!/tmp']
