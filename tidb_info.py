@@ -6,7 +6,7 @@ import pymysql
 import logging as log
 from collections import namedtuple
 import yaml
-from util import variable_data_compare,baseline_varidation
+from util import variable_data_compare, baseline_varidation
 
 
 def get_baseline_vars_map(baseline_dict):
@@ -51,6 +51,7 @@ def get_vars_map(conn: pymysql.Connect):
         cursor.close()
     return vars_map
 
+
 def baseline_checker(conn: pymysql, baseline_dict):
     """
     连接到数据库中根据基线核查字典:baseline_dict中的规则来检查conn连接中的参数是否符合基线
@@ -59,13 +60,14 @@ def baseline_checker(conn: pymysql, baseline_dict):
     :param attr:
     :return:
     """
-    #检查baseline_dict数据是否合法
+    # 检查baseline_dict数据是否合法
     baseline_varidation(baseline_dict)
 
     baseline_checker_map = {}
-    BaseLineChecker = namedtuple("BaseLineChecker", ["var_type", "var_name","baseline_policy", "check_default", "check_baseline",
-                                                     "check_policy", "baseline_type", "baseline_value",
-                                                     "baseline_default", "database_default"])
+    BaseLineChecker = namedtuple("BaseLineChecker",
+                                 ["var_type", "var_name", "baseline_policy", "check_default", "check_baseline",
+                                  "check_policy", "baseline_type", "baseline_value",
+                                  "baseline_default", "database_default"])
     vars_map = get_vars_map(conn)
     baseline_vars_map = get_baseline_vars_map(baseline_dict)
     for baseline_key in baseline_vars_map:
@@ -91,23 +93,25 @@ def baseline_checker(conn: pymysql, baseline_dict):
                     if variable_data_compare(baseline_key[1], each_baseline_val, vars_map[baseline_key], "=="):
                         check_baseline = True
                         break
-            baseline_checker = BaseLineChecker(baseline_key[0], baseline_key[1], baseline.baseline_policy,check_default,
-                                                                 check_baseline,
-                                                                 baseline.baseline_policy, baseline.baseline_type,
-                                                                 baseline.baseline_value,
-                                                                 baseline.default_value,
-                                                                 vars_map[baseline_key])
+            baseline_checker = BaseLineChecker(baseline_key[0], baseline_key[1], baseline.baseline_policy,
+                                               check_default,
+                                               check_baseline,
+                                               baseline.baseline_policy, baseline.baseline_type,
+                                               baseline.baseline_value,
+                                               baseline.default_value,
+                                               vars_map[baseline_key])
+            # print(dict(baseline_checker._asdict()))
             baseline_checker_map[baseline_key] = baseline_checker._asdict()
 
-    return {"variables":[dict(x) for x in baseline_checker_map.values()]}
-
+    return {"variables": [dict(x) for x in baseline_checker_map.values()]}
 
 
 if __name__ == "__main__":
-    log.basicConfig(level=log.INFO)
+    #log.basicConfig(level=log.INFO)
     try:
-        conn = pymysql.connect(host="127.0.0.1", port=4000, user="root", password="", database="mysql",connect_timeout=2)
-        with open('baseline_check.yml','r',encoding='utf-8') as file:
+        conn = pymysql.connect(host="127.0.0.1", port=4000, user="root", password="", database="mysql",
+                               connect_timeout=2)
+        with open('baseline_check.yml', 'r', encoding='utf-8') as file:
             baseline_dict = yaml.load(file, Loader=yaml.SafeLoader)
         result = baseline_checker(conn, baseline_dict)
         # 只打印policy=force的且check_baseline=false的
@@ -116,7 +120,7 @@ if __name__ == "__main__":
             baseline = result["variables"][i]
             if baseline["baseline_policy"] == "force" and baseline["check_baseline"] == False:
                 result_filter.append(baseline)
-        result = yaml.dump(result_filter,indent=2)
+        result = yaml.dump(result_filter, indent=2, sort_keys=False)
         print(result)
     except Exception as e:
         print(e)
