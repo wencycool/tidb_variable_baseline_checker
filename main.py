@@ -68,5 +68,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error:{e}")
         exit(1)
-    log.info(f"输出文件名为：{args.output}")
+    if args.output is not None:
+        log.info(f"输出文件名为：{args.output}")
     print("Done")

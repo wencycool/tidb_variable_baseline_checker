@@ -66,7 +66,7 @@ def baseline_checker(conn: pymysql, baseline_dict):
     baseline_checker_map = {}
     BaseLineChecker = namedtuple("BaseLineChecker",
                                  ["var_type", "var_name", "baseline_policy", "check_default", "check_baseline",
-                                  "check_policy", "baseline_type", "baseline_value",
+                                  "baseline_type", "baseline_value",
                                   "baseline_default", "database_default"])
     vars_map = get_vars_map(conn)
     baseline_vars_map = get_baseline_vars_map(baseline_dict)
@@ -96,7 +96,7 @@ def baseline_checker(conn: pymysql, baseline_dict):
             baseline_checker = BaseLineChecker(baseline_key[0], baseline_key[1], baseline.baseline_policy,
                                                check_default,
                                                check_baseline,
-                                               baseline.baseline_policy, baseline.baseline_type,
+                                               baseline.baseline_type,
                                                baseline.baseline_value,
                                                baseline.default_value,
                                                vars_map[baseline_key])
