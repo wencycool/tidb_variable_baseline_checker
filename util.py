@@ -58,6 +58,8 @@ def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
     :return:返回两个值是否逻辑相等
     """
     # 处理特殊形式，针对值为*或者+的情况进行处理
+    val1 = str(val1)
+    val2 = str(val2)
     if val1 == "*" or val2 == "*":
         return True
     elif val1 =="+":
@@ -118,7 +120,7 @@ def variable_data_compare(parm, val1: str, val2: str,operator = "=="):
             return True
         return False
     if operator == "==":
-        return like_eq(val1, val2)
+        return like_eq(_val1, _val2)
     _val1_number,ok1 = check_number(_val1)
     _val2_number,ok2 = check_number(_val2)
     # 可以进行比较

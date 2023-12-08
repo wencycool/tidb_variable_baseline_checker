@@ -70,7 +70,7 @@ def baseline_checker(conn: pymysql, baseline_dict):
     baseline_vars_map = get_baseline_vars_map(baseline_dict)
     for baseline_key in baseline_vars_map:
         if baseline_key not in vars_map:
-            log.log(f"variable:{baseline_key} cannot find in database")
+            log.info(f"variable:{baseline_key} cannot find in database")
         else:
             # 基线核查主要逻辑部分
             baseline = baseline_vars_map[baseline_key]
@@ -104,6 +104,7 @@ def baseline_checker(conn: pymysql, baseline_dict):
 
 
 if __name__ == "__main__":
+    log.basicConfig(level=log.INFO)
     try:
         conn = pymysql.connect(host="127.0.0.1", port=4000, user="root", password="", database="mysql",connect_timeout=2)
         with open('baseline_check.yml','r',encoding='utf-8') as file:
@@ -113,7 +114,7 @@ if __name__ == "__main__":
         result_filter = []
         for i in reversed(range(len(result["variables"]))):
             baseline = result["variables"][i]
-            if baseline["baseline_policy"] == "recommend" and baseline["check_baseline"] == False:
+            if baseline["baseline_policy"] == "force" and baseline["check_baseline"] == False:
                 result_filter.append(baseline)
         result = yaml.dump(result_filter,indent=2)
         print(result)

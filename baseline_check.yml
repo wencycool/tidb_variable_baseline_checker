@@ -21,18 +21,126 @@
 
 
 variables:
-  - var-type: variable
-    var-name: "transaction_isolation"
-    default-value: "REPEATABLE-READ"
+  - var-type: tidb
+    var-name: "binlog.enable"
+    default-value: "true"
     baseline-policy: force
     baseline-type: point
-    baseline-value: ["REPEATABLE-READ"]
+    baseline-value: ["true"]
+  - var-type: tidb
+    var-name: "compatible-kill-query"
+    default-value: "false"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["false"]
+  - var-type: tidb
+    var-name: "log.enable-slow-log"
+    default-value: "true"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["true"]
+  - var-type: tidb
+    var-name: "log.level"
+    default-value: "info"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["info"]
+  - var-type: tidb
+    var-name: "oom-use-tmp-storage"
+    default-value: "true"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["true"]
+  - var-type: tidb
+    var-name: "performance.run-auto-analyze"
+    default-value: "true"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["true"]
+  - var-type: tikv
+    var-name: "log-level"
+    default-value: "info"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["info"]
+  - var-type: tikv
+    var-name: "storage.block-cache.shared"
+    default-value: "true"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["true"]
+  - var-type: pd
+    var-name: "schedule.high-space-ratio"
+    default-value: 0.8
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: [0.8]
+  - var-type: pd
+    var-name: "schedule.low-space-ratio"
+    default-value: 0.9
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: [0.9]
+  - var-type: pd
+    var-name: "schedule.max-store-down-time"
+    default-value: "30m"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["30m"]
+  - var-type: tiflash
+    var-name: "logger.level"
+    default-value: "information"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["information"]
+  - var-type: variable
+    var-name: "autocommit"
+    default-value: "ON"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["ON"]
+  - var-type: variable
+    var-name: "sql_mode"
+    default-value: "*"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["*"]
+  - var-type: variable
+    var-name: "tidb_hashagg_final_concurrency"
+    default-value: 1
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: [1]
+  - var-type: variable
+    var-name: "tidb_hashagg_partial_concurrency"
+    default-value: 1
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: [1]
+  - var-type: variable
+    var-name: "tidb_txn_mode"
+    default-value: "pessimistic"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["pessimistic"]
+  - var-type: variable
+    var-name: "transaction_isolation"
+    default-value: "READ-COMMITTED"
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: ["READ-COMMITTED"]
+  - var-type: variable
+    var-name: "wait_timeout"
+    default-value: 3600
+    baseline-policy: force
+    baseline-type: point
+    baseline-value: [3600]
   - var-type: variable
     var-name: "tidb_gc_run_interval"
     default-value: "10m0s"
-    baseline-policy: force
+    baseline-policy: recommend
     baseline-type: range
-    baseline-value: [ "9m1s", "8h0m0s" ]
+    baseline-value: [ "10m0s", "8h0m0s" ]
   - var-type: tidb
     var-name: "performance.stmt-count-limit"
     default-value: "5000"
@@ -44,13 +152,7 @@ variables:
     default-value: 'high'
     baseline-policy: recommend
     baseline-type: list
-    baseline-value: ['low', 'medium', 'hight']
-  - var-type: tidb
-    var-name: "performance.stmt-count-limit"
-    default-value: "5000"
-    baseline-policy: recommend
-    baseline-type: range
-    baseline-value: ["3000", "6000"]
+    baseline-value: ['low', 'medium', 'high']
   - var-type: tidb
     var-name: "tmp-storage-path"
     default-value: 'tmp-storage'
