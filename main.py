@@ -3,6 +3,8 @@
 import argparse
 import getpass
 import logging as log
+import re
+
 import pymysql
 import yaml
 from tidb_info import baseline_checker
@@ -23,16 +25,21 @@ def output_dict(conn: pymysql.connect, baselinefile: str, policy, checkout):
     result_filter = []
     for i in range(len(baseline_result_dict["variables"])):
         baseline = baseline_result_dict["variables"][i]
+        # 将字典key的下划线变为横线
+        new_baseline = {}
+        for key in baseline:
+            new_key = re.sub(r"_",r"-",key)
+            new_baseline[new_key] = baseline[key]
         p = baseline["baseline_policy"]
         c = str(baseline["check_baseline"]).lower()
         if p == policy and c == checkout:
-            result_filter.append(baseline)
+            result_filter.append(new_baseline)
         elif p == policy and checkout == "all":
-            result_filter.append(baseline)
+            result_filter.append(new_baseline)
         elif policy == "all" and c == checkout:
-            result_filter.append(baseline)
+            result_filter.append(new_baseline)
         elif policy == "all" and checkout == "all":
-            result_filter.append(baseline)
+            result_filter.append(new_baseline)
     return {"variables": result_filter}
     # result = yaml.dump(result_filter, indent=2, sort_keys=False)
 
